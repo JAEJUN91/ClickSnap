@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="org.np.mapper.ServiceTagMapper">
+	<insert id="insert">
+		insert into np_service_tag (tag, sno) 
+		values (#{tag},#{sno})
+	</insert>
+	
+	<select id="getList" resultType="org.np.domain.ServiceTagVO">
+		select * from np_service_tag where sno=#{sno}
+	</select>
+</mapper>

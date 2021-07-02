@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="org.np.mapper.ArtistMapper">
+	<resultMap type="org.np.domain.ArtistVO" id="artistMap">
+		<id property="artistId" column="artistid"/>
+		<result property="artistId" column="artistid"/>
+		<result property="artistPwd" column="artistpwd"/>
+		<result property="artistName" column="artistname"/>
+		<result property="email" column="email"/>
+		<result property="phoneNum" column="phonenum"/>
+		<result property="profileImg" column="profileimg"/>
+		<result property="nickName" column="nickname"/>
+		<result property="penalty" column="penalty"/>
+		<result property="introduce" column="introduce"/>
+		<result property="career" column="career"/>
+		<result property="concept" column="concept"/>
+		<collection property="authList" resultMap="authMap"></collection>
+	</resultMap>
+	<resultMap type="org.np.domain.AuthVO" id="authMap">
+		<result property="artistId" column="artistid"/>
+		<result property="auth" column="auth"/>
+	</resultMap>
+	<select id="read" resultMap="artistMap">
+		select
+		art.artistid, artistpwd, artistname, email, phonenum, profileimg, nickname, auth, penalty, introduce, career, concept
+	from
+		np_artist art left outer join np_artist_auth auth on art.artistid = auth.artistid
+	where art.artistid=#{artistId}	
+	</select>
+	
+</mapper>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="org.np.mapper.MemberMapper">
+	<resultMap type="org.np.domain.MemberVO" id="memberMap">
+		<id property="userId" column="userid"/>
+		<result property="userId" column="userid"/>
+		<result property="userPwd" column="userpwd"/>
+		<result property="userName" column="username"/>
+		<result property="email" column="email"/>
+		<result property="phoneNum" column="phonenum"/>
+		<result property="profileImg" column="profileimg"/>
+		<result property="nickName" column="nickname"/>
+		<collection property="authList" resultMap="authMap"></collection>
+	</resultMap>
+	<resultMap type="org.np.domain.AuthVO" id="authMap">
+		<result property="userId" column="userid"/>
+		<result property="auth" column="auth"/>
+	</resultMap>
+	<select id="read" resultMap="memberMap">
+		select
+		mem.userid, userpwd, username, email, phonenum, profileimg, nickname, auth
+	from
+		np_cust mem left outer join np_cust_auth auth on mem.userid = auth.userid
+	where mem.userid=#{userId}	
+	</select>
+	
+</mapper>

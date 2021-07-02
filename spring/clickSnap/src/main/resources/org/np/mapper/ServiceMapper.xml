@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="org.np.mapper.ServiceMapper">
+	<insert id="insert">
+		<selectKey keyProperty="sno" resultType="int" order="BEFORE">
+			select seq_service.nextval from dual
+		</selectKey>
+		insert into np_service (sno, content, category, artist_id, title, 
+		latstart, lngstart, lattarget, lngtarget, studio, pickup, starttime, endtime, registerdate)
+		values(#{sno}, #{content}, #{category},'amugae',#{title},#{latStart},
+		#{lngStart}, #{latTarget}, #{lngTarget}, #{studio}, #{pickUp}, #{startTime}, #{endTime}, sysdate)
+	</insert>
+	
+	<select id="searchByCategory" resultType="org.np.domain.ServiceVO">
+		select * from np_service where category = #{category}	
+	</select>
+	
+	<select resultType="org.np.domain.ServiceVO" id="searchList">
+		select * from np_service 
+		<where>
+			<if test="type != null and keyword != null">
+				<trim prefix="and (" suffix=")" prefixOverrides="OR">
+					<foreach collection="arr" item="type">
+						<trim prefix="OR">
+							<choose>
+								<when test="type=='T'.toString()">title like '%'||#{keyword}||'%'</when>
+								<when test="type=='C'.toString()">content like '%'||#{keyword}||'%'</when>
+							</choose>
+						</trim>
+					</foreach>
+				</trim>
+			</if>
+			<if test="location!=null">
+				and location=#{location}
+			</if>
+			<if test="tagArr!=null">
+				and sno in (select sno from np_service_tag where tag=
+				<foreach collection="tagArr" item = "tag" close = ")" separator = "or tag=">
+					#{tag}
+	 			</foreach>
+			</if>
+		</where>
+	</select>
+	
+	<select resultType="org.np.domain.ServiceVO" id="getList">
+		select * from np_service
+	</select>
+	
+	<sql id="criteria">
+	<if test="keyword != null">
+		where title like '%'||#{keyword}||'%'
+	</if>
+		<where>
+			<if test="type==null and keyword==null">
+				<trim prefix="and (" suffix=")" prefixOverrides="OR">
+					<foreach collection="arr" item="type">
+						<trim prefix="OR">
+							<choose>
+								<when test="type=='T'.toString()">title like '%'||#{keyword}||'%'</when>
+								<when test="type=='C'.toString()">content like '%'||#{keyword}||'%'</when>
+							</choose>
+						</trim>
+					</foreach>
+				</trim>
+			</if>
+			<if test="location!=null">
+				and location=#{location}
+			</if>
+			<if test="tagArr!=null">
+				and sno in (select sno from np_service_tag where tag=
+				<foreach collection="tagArr" item = "tag" close = ")" separator = "or tag=">
+					#{tag}
+	 			</foreach>
+			</if>
+		</where>
+	</sql>
+	
+	<!-- <select id="getListWithPaging"
+		resultType="org.kcm.domain.BoardVO">
+		<![CDATA[ 
+			select *
+			from
+			(
+			select /*+index_desc(tbl_board pk_board)*/
+			rownum rn, bno, title, content, writer, regDate, updateDate, replyCnt
+			from 
+				tbl_board
+			where
+		]]>	 
+		<include refid="criteria"></include>
+		<![CDATA[
+			rownum <= #{pageNum}*#{amount}
+			)
+			where rn > (#{pageNum}-1)*#{amount}
+			order by bno desc
+		]]>
+		특수문자가 포함된다는 것을 표현한 태그
+	</select> -->
+</mapper>
